@@ -31,7 +31,7 @@ S3_REGION_NAME = os.getenv("S3_REGION_NAME")
 S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
 
 # Additional custom stopwords for classification
-CUSTOM_STOWORDS = ["said", "say", "says"]
+CUSTOM_STOPWORDS = ["said", "say", "says"]
 
 
 # HELPER FUNCTIONS
@@ -64,7 +64,7 @@ def process_text(text):
     word_tokens = word_tokens[is_alpha]
 
     # Remove stopwords
-    custom_stopwords = ["said", "say", "says"]
+    custom_stopwords = CUSTOM_STOPWORDS
     stop_words = set(stopwords.words("english") + custom_stopwords)
     is_not_stopword = list(map(lambda token: token not in stop_words, word_tokens))
     word_tokens = word_tokens[is_not_stopword]
@@ -130,13 +130,13 @@ app = Flask(__name__)
 # Preset all needed files at server start
 # ***************************************
 
-# For large files that needs to be downloaded from somewhere, download them here
-pickle_file = "./models/MultinomialLogisticRegression-TFIDF5000-Best-RandomizedSearch3CV.pkl"
-# pickle_file = boto3.s3().getfile(filepath)
+# # For large files that needs to be downloaded from somewhere, download them here
+# pickle_file = "./models/MultinomialLogisticRegression-TFIDF5000-Best-RandomizedSearch3CV.pkl"
+# # pickle_file = boto3.s3().getfile(filepath)
 
-# Then, recreate the prediction model
-with open(pickle_file, 'rb') as file:
-    model = joblib.load(file)
+# # Then, recreate the prediction model
+# with open(pickle_file, 'rb') as file:
+#     model = joblib.load(file)
 
 
 # Define routes and their handlers
@@ -153,12 +153,12 @@ def root_handler():
 
 # Handler for prediction and summarization
 @app.route('/api/predict_summarize/', methods=["POST"])
-def summarize_handler():
+def predict_summarize_handler():
     # Get the passed data
     data = request.get_json() # An array of strings
 
     # Predict our category
-    predicted_num = model.predict(data)[0]
+    predicted_num = classification_model.predict(data)[0]
 
     # Generate Summary
     summary = get_summary(data[0], summary_tokenizer, summary_model)

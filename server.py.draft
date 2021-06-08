@@ -1,0 +1,111 @@
+## This is the file that define the API Endpoint handlers for the backend server
+## - backendserver.com/api
+
+
+# Import needed libraries
+# ***********************
+
+from flask import Flask, request, redirect, url_for, flash, jsonify
+import numpy as np
+import pickle
+import json
+# import boto3 # For accessing files stored on S3
+# import sklearn
+
+
+# Create a new webapp instance
+# ****************************
+
+app = Flask(__name__)
+
+
+# Preset all needed files at server start
+# ***************************************
+
+# # For large files that needs to be downloaded from somewhere, download them here
+# predict_pickle_file = boto3.s3().getfile("path/to/predict_model.pickle")
+# summarize_pickle_file = boto3.s3().getfile("path/to/summarize_model.pickle")
+
+# # Then, recreate the prediction model
+# model_predict = sklearn.joblib.read(predict_pickle_file)
+# model_summarize = sklearn.joblib.read(summarize_pickle_file)
+
+## For summarization, simply import the pre-trained model to use here
+
+
+# Define routes and their handlers
+# ********************************
+
+# Define Root App Endpoint
+@app.route("/api/", methods=["POST"])
+def root_handler():
+    # There is nothing here: Move along
+    return {
+      "code": 404,
+      "message": "Not found"
+    }
+
+# Handler for prediction and summarization
+@app.route('/api/predict_summarize/', methods=["POST"])
+def predict_summarize_handler():
+    # The data on the rquest object is JSON
+    data = request.get_json()
+    
+    # Predict using the model
+    prediction = model_predict.predict(data)
+    # summary = model_summarize.summarize(data)
+
+    # Return result
+    return jsonify({
+      "prediction": prediction,
+      "summary": summary
+    })
+
+# Handler for the prediction
+@app.route('/api/predict/', methods=["POST"])
+def predict_handler():
+    # The data on the rquest object is JSON
+    data = request.get_json()
+    
+    # Predict using the model
+    summary = np.array2string(model.predict(data))
+
+    # Return result
+    return jsonify(prediction)
+
+# If this is executable, set the following
+if __name__ == "__main__":
+  # Grab the saved model from its stored location
+  pickle_file = "remote_models/example_final_model.pickle"
+  # Resurect that model from the pickle file
+  model = pickle.load(pickle_file, "rb")
+  # Run the app
+  app.run(debug=True, host="127.0.0.1")
+
+
+
+
+
+
+# server.py
+
+import sklearn
+import Flask
+
+app = Flask()
+
+filepath = path_to_model
+
+s3 = boto3.s3()
+
+model = sklearn.joblib.read(s3.getfile(filepath))
+
+def predict_category(req, res):
+    pred = model.predict(new_data)
+    return res.pred
+
+def summarize(req, res):
+    summary = model.summarize(new_data)
+    return res.summary
+
+app.run()

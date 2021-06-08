@@ -29,6 +29,7 @@ S3_SECRET_KEY_ACCESS = os.getenv("S3_SECRET_KEY_ACCESS")
 S3_USER = os.getenv("S3_USER")
 S3_REGION_NAME = os.getenv("S3_REGION_NAME")
 S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
+SERVER_LISTENING_IP=os.getenv("SERVER_LISTENING_IP")
 
 # Additional custom stopwords for classification
 CUSTOM_STOPWORDS = ["said", "say", "says"]
@@ -177,7 +178,7 @@ def predict_summarize_handler():
 # If exectuable, run the app
 if __name__ == '__main__':
     app.run(
-      host='127.0.0.1', 
+      host=SERVER_LISTENING_IP, 
       debug=False # Remove this for production
     )
 
